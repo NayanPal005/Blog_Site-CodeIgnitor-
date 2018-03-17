@@ -26,7 +26,7 @@
             <tr>
                 <td><?= ++$count ?></td>
                 <td><?=$article->title?></td>
-                <td><?= "date"?></td>
+                <td><?= $article->article_date?></td>
 
 
             </tr>

@@ -1,7 +1,7 @@
 <?php include ('public_header.php')  ?>
 
 
- <form class="form-horizontal"  id="" <?php echo form_open('login/admin_login');?> >
+ <form class="form-horizontal"  id="" <?php echo form_open('login/admin_login');?>
 
     <h1 style="text-align: center">Admin Login</h1>
      <hr>

@@ -26,7 +26,7 @@ class Articlesmodel extends CI_Model
         $this->load->library('session');
 
         $query = $this->db
-            ->select(['title', 'id'])
+            ->select(['title', 'id','article_date'])
             ->from('articles')
             ->limit($limit, $offset)
             ->get();
@@ -39,7 +39,7 @@ class Articlesmodel extends CI_Model
     {
         $this->load->library('session');
         $query = $this->db
-            ->select(['title', 'id'])
+            ->select(['title', 'id','article_date'])
             ->from('articles')
             ->get();
         return $query->num_rows();
@@ -53,7 +53,7 @@ class Articlesmodel extends CI_Model
         $user_id = $this->session->userdata('user_id');
 
         $query = $this->db
-            ->select(['title', 'id'])
+            ->select(['title', 'id','article_date'])
             ->from('articles')
             ->where('user_id', $user_id)
             ->get();
@@ -76,7 +76,7 @@ class Articlesmodel extends CI_Model
     {
 
         $q = $this->db
-            ->select(['id', 'title', 'body'])
+            ->select(['id', 'title', 'body','article_date'])
             ->where('id', $articleId)
             ->get('articles');
 

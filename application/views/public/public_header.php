@@ -51,5 +51,8 @@
 
     <?=  form_close();?>
         <?= form_error('query','<p class="navbar-text" style="color: #ff0000">','</p>') ?>
+        <?php echo anchor('login/admin_login', 'Login', 'class="btn btn-success"') ?>
     </div>
+
+
 </nav>
