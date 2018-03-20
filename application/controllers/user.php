@@ -115,7 +115,7 @@ class User extends MY_Controller{
        //print_r($test);
         $config=[
             'base_url'=>base_url('user/search_results/$query'),
-            'per_page'=>4,
+            'per_page'=>15,
             'total_ rows'=>$this->articles->count_SearchArticles($query),
 
             'full_tag_open'=>'<ul class="pagination">',
@@ -147,6 +147,25 @@ class User extends MY_Controller{
 
          $this->load->view('public/searchArticles_list',compact('articles'));
 
+    }
+    /*
+    public function singleArticle($id){
+
+        $this->load->model('articlesmodel','articles');
+        $articleDetails=$this->articles->find_singleArticle($id);
+        $this->load->view('public/article_detail.php',compact('articleDetails'));
+
+    }
+    */
+    public function singleArticle($id){
+
+        $this->load->helper('form');
+
+        $this->load->model('articlesmodel','articles');
+
+        $articleDetails=$this->articles->find_singleArticle($id);
+        //print_r($articleDetails);
+        $this->load->view('public/article_detail.php',compact('articleDetails'));
 
 
     }
@@ -154,10 +173,15 @@ class User extends MY_Controller{
     public function __construct()
     {
         parent::__construct(); //ei admin er parent hocche MY_Controller jehutu upore extends kora hoyeche. :)
+
         $this->load->model('articlesmodel','articles');
+
         $this->load->library('session');
+
         $this->load->library('pagination');
+
         $this->load->helper('form');
+
         $this->load->model('articlesmodel','articles');
     }
 

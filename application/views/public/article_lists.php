@@ -25,10 +25,9 @@
         ?>
             <tr>
                 <td><?= ++$count ?></td>
-                <td><?=$article->title?></td>
-                <td><?= $article->article_date?></td>
-
-
+                <td><?= anchor("user/singleArticle/{$article->id}",$article->title)?></td>
+               <!-- <td><?= $article->article_date?></td> --> <!-- normal fetch without ordering in order -->
+                <td><?= date("d M y H i s")?></td>
             </tr>
         <?php endforeach; ?>
         <?php else: ?>

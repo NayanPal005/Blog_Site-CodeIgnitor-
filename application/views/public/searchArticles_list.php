@@ -26,8 +26,8 @@
                 <tr>
                    <td><?= ++$count ?></td>
                    <!-- <td><?=$article->id?></td> -->
-                    <td><?=$article->title?></td>
-                    <td><?= "date"?></td>
+                    <td><?= anchor("user/singleArticle/{$article->id}",$article->title)?></td>
+                    <td><?= date("d M y H i s")?></td>
 
 
                 </tr>

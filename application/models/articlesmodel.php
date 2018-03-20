@@ -29,6 +29,7 @@ class Articlesmodel extends CI_Model
             ->select(['title', 'id','article_date'])
             ->from('articles')
             ->limit($limit, $offset)
+            ->order_by('article_date','DESC')
             ->get();
 
         return $query->result();
@@ -165,6 +166,39 @@ class Articlesmodel extends CI_Model
         // print_r($query);
 
         return $query->result();
+
+
+    }
+    /*
+    public function find_singleArticle($id){
+
+        $q=$this->db
+            ->from('articles')
+            ->where('id',$id)
+            ->get();
+         if ($q->num_rows())
+             return $q->rows();
+         return false;
+
+
+    }
+    */
+    public function find_singleArticle($id){
+
+        $q=$this->db
+                ->where('id',$id)
+                ->get('articles');
+
+
+        //print_r($q);
+
+
+
+            return $q->row();
+
+        //return false;
+
+
 
 
     }
