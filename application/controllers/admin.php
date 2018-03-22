@@ -18,27 +18,27 @@ class Admin extends MY_Controller
 
         $this->load->library('pagination');
 
-        $config=[
-            'base_url'=>base_url('admin/dashboard'),
-            'per_page'=>5,
-            'total_rows'=>$this->articles->num_rows(),
-            'full_tag_open'=>'<ul class="pagination">',
-            'full_tag_close'=>'</ul>',
-            'cur_tag_open'=>'<li class="active"><a>',
-            'cur_tag_close'=>'</li>',
-            'prev_tag_open'=>'<li>',
-            'prev_tag_close'=>'</li>',
-            'next_tag_open'=>'<li>',
-            'next_tag_close'=>'</li>',
-            'num_tag_open'=>'<li>',
-            'num_tag_close'=>'</li>',
+        $config = [
+            'base_url' => base_url('admin/dashboard'),
+            'per_page' => 5,
+            'total_rows' => $this->articles->num_rows(),
+            'full_tag_open' => '<ul class="pagination">',
+            'full_tag_close' => '</ul>',
+            'cur_tag_open' => '<li class="active"><a>',
+            'cur_tag_close' => '</li>',
+            'prev_tag_open' => '<li>',
+            'prev_tag_close' => '</li>',
+            'next_tag_open' => '<li>',
+            'next_tag_close' => '</li>',
+            'num_tag_open' => '<li>',
+            'num_tag_close' => '</li>',
 
 
         ];
 
         $this->pagination->initialize($config);
 
-        $articles = $this->articles->articles_list($config['per_page'],$this->uri->segment(3));
+        $articles = $this->articles->articles_list($config['per_page'], $this->uri->segment(3));
 
 
         $this->load->view('admin/dashboard.php', ['articles' => $articles]);
@@ -58,28 +58,52 @@ class Admin extends MY_Controller
            $this->load->view('admin/add_article');
        }
        */
-       // $this->load->helper('form');
+        // $this->load->helper('form');
 
         $this->load->view('admin/add_article');
 
     }
-    public function store_article(){
-        // $this->load->library('form_validation');
-        $this->form_validation->set_rules('title','Article Title','required|alpha|trim');
-        $this->form_validation->set_rules('body','Article Body','required');
 
-       $this->form_validation->set_error_delimiters("<p class='text-danger'>","</p>"); /*Error message coloring control ta globally kora hoilo :)*/
+    public function store_article()
+    {
 
-       // if ($this->form_validation->run('add_article_rules')){
-        if ($this->form_validation->run()){
+        $config = [
+            'upload_path' => './image',
+            'allowed_types' => 'jpg|jpeg|png|gif'
+        ];
 
-            $post=$this->input->post();
-             unset($post['ADD']);
-           // $this->load->model('articlesmodel','articles');
+        $this->load->library('upload', $config);
+
+        $this->form_validation->set_rules('title', 'Article Title', 'required|alpha|trim');
+        $this->form_validation->set_rules('body', 'Article Body', 'required');
+        $this->form_validation->set_error_delimiters("<p class='text-danger'>", "</p>"); /*Error message coloring control ta globally kora hoilo :)*/
+
+        // if ($this->form_validation->run('add_article_rules') && $this->upload->do_upload()){
+        if ($this->form_validation->run() && $this->upload->do_upload('userFile')) {
+
+            $post = $this->input->post();
+            unset($post['ADD']);
+
+            $data = $this->upload->data();
+            echo "<pre>";
+           // print_r($data);
+            //exit();
+
+            $image_path=base_url("image/".$data['raw_name'].$data['file_ext']);
+
+            $post['image_path']=$image_path;
+
+          // print_r($image_path);
+          // exit();
+
+            unset($post['ADD']);
+
+             $this->load->model('articlesmodel','articles');
+
             return $this->_flashAndRedirect($this->articles->add_article($post),
                 'Article Inserted Successfully',
                 'Article Inserted Falied!Please Try Again');
-            /*
+
             if ($this->articles->add_article($post)){
                $this->session->set_flashdata('feedback','Article Inserted Successfully');
                 $this->session->set_flashdata('feedback-class','alert-success');
@@ -89,78 +113,85 @@ class Admin extends MY_Controller
                 $this->session->set_flashdata('feedback-class','alert-danger');
             }
             return redirect('admin/dashboard');
-            */
-        }
 
-        else{
+        } else {
             echo "Form Validation Failed";
 
+           // $upload_error=$this->upload->display_error();
+
+
             $this->load->view('admin/add_article');
-           // echo validation_errors();
+            //$this->load->view('admin/add_article',compact('upload_error'));
+            // echo validation_errors();
         }
     }
-    public function edit_article($articleId){
+
+    public function edit_article($articleId)
+    {
         //$this->load->helper('form');
         //$this->load->model('articlesmodel','articles');
-       $getarticle= $this->articles->find_article($articleId);
+        $getarticle = $this->articles->find_article($articleId);
 
-       $this->load->view('admin/edit_article',['getarticle'=> $getarticle]);
-       //  $this->load->library('form_validation');
-/*
-         $this->form_validation->set_rules('title','Article Title','required|alpha|trim');
-         $this->form_validation->set_rules('body','Article Body','required');
+        $this->load->view('admin/edit_article', ['getarticle' => $getarticle]);
+        //  $this->load->library('form_validation');
+        /*
+                 $this->form_validation->set_rules('title','Article Title','required|alpha|trim');
+                 $this->form_validation->set_rules('body','Article Body','required');
 
-         $this->form_validation->set_error_delimiters("<p class='text-danger'>","</p>");
-         */ /*Error message coloring control ta globally kora hoilo :)*/
-        if ($this->form_validation->run()){
+                 $this->form_validation->set_error_delimiters("<p class='text-danger'>","</p>");
+                 */ /*Error message coloring control ta globally kora hoilo :)*/
+        if ($this->form_validation->run()) {
 
-        }
-        else{
+        } else {
 
         }
 
     }
 
-    public function update_article(){
+    public function update_article()
+    {
 
-       // $this->load->library('form_validation');
-        $this->form_validation->set_rules('title','Article Title','required|alpha|trim');
-        $this->form_validation->set_rules('body','Article Body','required');
+        // $this->load->library('form_validation');
+        $this->form_validation->set_rules('title', 'Article Title', 'required|alpha|trim');
 
-        $this->form_validation->set_error_delimiters("<p class='text-danger'>","</p>"); /*Error message coloring control ta globally kora hoilo :)*/
-        $post=$this->input->post();
-        if ($this->form_validation->run()){
+        $this->form_validation->set_rules('body', 'Article Body', 'required');
 
-            $post=$this->input->post();
-            $articleId=$post['articleId'];
+        $this->form_validation->set_error_delimiters("<p class='text-danger'>", "</p>"); /*Error message coloring control ta globally kora hoilo :)*/
+
+        $post = $this->input->post();
+
+        if ($this->form_validation->run()) {
+
+            $post = $this->input->post();
+            $articleId = $post['articleId'];
             unset($post['EDIT']);
             unset($post['articleId']);
-           // print_r($post);
-           // $this->load->model('articlesmodel','articles');
-            return $this->_flashAndRedirect($this->articles->update_article($articleId,$post),
+            // print_r($post);
+            // $this->load->model('articlesmodel','articles');
+            return $this->_flashAndRedirect($this->articles->update_article($articleId, $post),
+
                 'Article Updated Successfully',
+
                 'Article Updated Falied!Please Try Again');
-          /*
-            if ($this->articles->update_article($articleId,$post)){
-                $this->session->set_flashdata('feedback','Article Updated Successfully');
-                $this->session->set_flashdata('feedback-class','alert-success');
-            }
-            else{
-                $this->session->set_flashdata('feedback','Article Updated Falied');
-                $this->session->set_flashdata('feedback-class','alert-danger');
-            }
-            return redirect('admin/dashboard');
-            */
-        }
-
-
-        else{
+            /*
+              if ($this->articles->update_article($articleId,$post)){
+                  $this->session->set_flashdata('feedback','Article Updated Successfully');
+                  $this->session->set_flashdata('feedback-class','alert-success');
+              }
+              else{
+                  $this->session->set_flashdata('feedback','Article Updated Falied');
+                  $this->session->set_flashdata('feedback-class','alert-danger');
+              }
+              return redirect('admin/dashboard');
+              */
+        } else {
             echo "Form Validation Failed";
 
             $this->load->view('admin/add_article');
             // echo validation_errors();
         }
     }
+
     /*
      *==================================eta amar nijer way te kora ar ================
      * next ta hocche arektu secure vabe form cretae kore dlete er kaj korse=================================
@@ -179,12 +210,14 @@ class Admin extends MY_Controller
 
     }
 */
-    public function delete_article(){
+    public function delete_article()
+    {
 
-        $post=$this->input->post();
-        $articleId=$post['articleId'];
+        $post = $this->input->post();
+        $articleId = $post['articleId'];
         unset($post['delete']);
-      //  print_r($post);
+
+        //  print_r($post);
 
         //$this->load->model('articlesmodel','articles');
         return $this->_flashAndRedirect($this->articles->delete_article($articleId),
@@ -218,17 +251,18 @@ class Admin extends MY_Controller
         $this->load->helper('form');
         $this->load->model('articlesmodel', 'articles');
     }
-    private function _flashAndRedirect($successful,$successMessage,$failureMessage){
 
-        if ($successful){
+    private function _flashAndRedirect($successful, $successMessage, $failureMessage)
+    {
 
-            $this->session->set_flashdata('feedback',$successMessage);
-            $this->session->set_flashdata('feedback-class','alert-success');
+        if ($successful) {
 
-        }
-        else{
-            $this->session->set_flashdata('feedback',$failureMessage);
-            $this->session->set_flashdata('feedback-class','alert-danger');
+            $this->session->set_flashdata('feedback', $successMessage);
+            $this->session->set_flashdata('feedback-class', 'alert-success');
+
+        } else {
+            $this->session->set_flashdata('feedback', $failureMessage);
+            $this->session->set_flashdata('feedback-class', 'alert-danger');
 
         }
         return redirect('admin/dashboard');
